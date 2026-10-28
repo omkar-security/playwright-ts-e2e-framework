@@ -1,0 +1,36 @@
+{
+  "name": "playwright-ecommerce-framework",
+  "version": "1.0.0",
+  "description": "End-to-end test automation framework for an e-commerce web app (SauceDemo) + REST API (DummyJSON) using Playwright and TypeScript.",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:chromium": "playwright test --project=chromium",
+    "test:api": "playwright test --project=api",
+    "test:advanced": "playwright test --project=advanced",
+    "test:mobile": "playwright test --project=mobile-chrome",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:headed": "playwright test --project=chromium --headed",
+    "test:debug": "playwright test --project=chromium --debug",
+    "test:interactive": "playwright test --ui",
+    "codegen": "playwright codegen https://www.saucedemo.com",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write ."
+  },
+  "keywords": ["playwright", "typescript", "e2e", "test-automation", "page-object-model", "api-testing"],
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@faker-js/faker": "^9.6.0",
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.0",
+    "dotenv": "^16.4.7",
+    "prettier": "^3.5.0",
+    "typescript": "^5.7.3"
+  }
+}

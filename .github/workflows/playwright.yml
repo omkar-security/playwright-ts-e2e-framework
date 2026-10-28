@@ -1,0 +1,85 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # allows manual runs from the Actions tab
+    inputs:
+      grep:
+        description: 'Run only tests matching this tag (e.g. @smoke)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 6 * * 1-5' # nightly regression on weekdays
+
+jobs:
+  api-tests:
+    name: API tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - run: npx playwright test --project=api
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: report-api
+          path: playwright-report/
+          retention-days: 14
+
+  ui-tests:
+    name: UI tests (${{ matrix.project }} - shard ${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+        shard: [1/2, 2/2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run tests
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }} ${{ github.event.inputs.grep && format('--grep {0}', github.event.inputs.grep) || '' }}
+      - name: Make artifact name safe
+        id: name
+        run: echo "value=report-${{ matrix.project }}-$(echo '${{ matrix.shard }}' | tr '/' '-')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: ${{ steps.name.outputs.value }}
+          path: playwright-report/
+          retention-days: 14
+
+  advanced-tests:
+    name: Advanced + mobile tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --project=advanced --project=mobile-chrome
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: report-advanced
+          path: playwright-report/
+          retention-days: 14
