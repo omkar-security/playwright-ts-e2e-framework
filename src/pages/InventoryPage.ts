@@ -67,4 +67,12 @@ export class InventoryPage extends BasePage {
     await expect(this.page).toHaveURL(/inventory\.html/);
     await expect(this.title).toHaveText('Products');
   }
+
+  async addAllToCart(): Promise<void> {
+  const buttons = this.page.getByRole('button', { name: 'Add to cart' });
+  const total = await buttons.count();
+  for (let i = 0; i < total; i++) {
+    await buttons.first().click();
+  }
+}
 }

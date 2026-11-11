@@ -26,6 +26,7 @@ type PageFixtures = {
   /** Inventory page that is already opened (user is authenticated via storageState) */
   loggedInInventory: InventoryPage;
   api: ApiClient;
+  cartWithBackpack: CartPage;
 };
 
 export const test = base.extend<PageFixtures>({
@@ -60,6 +61,17 @@ export const test = base.extend<PageFixtures>({
     await use(inventoryPage);
     // Teardown: clear cart state stored in localStorage so tests stay independent
     await page.evaluate(() => window.localStorage.clear()).catch(() => {});
+  },
+   
+ cartWithBackpack: async ({ loggedInInventory, cartPage }, use) => {
+    console.log('🟢 SETUP: adding backpack and opening cart');
+    await loggedInInventory.addToCart('Sauce Labs Backpack');
+    await loggedInInventory.header.openCart();
+    await cartPage.expectToBeOpen();
+
+    await use(cartPage);
+
+    console.log('🧹 TEARDOWN: test finished, cleaning up');
   },
   api: async ({ request }, use) => {
     await use(new ApiClient(request));

@@ -91,4 +91,9 @@ test.describe('Inventory / Product listing', { tag: '@inventory' }, () => {
     await expect(page.locator('.social_facebook a')).toHaveAttribute('href', /facebook\.com/);
     await expect(page.locator('.social_linkedin a')).toHaveAttribute('href', /linkedin\.com/);
   });
+
+  test('TC-INV-09: add every product with one method', async ({ loggedInInventory }) => {
+  await loggedInInventory.addAllToCart();
+  await loggedInInventory.header.expectCartCount(6);
+});
 });

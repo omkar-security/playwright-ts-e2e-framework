@@ -60,5 +60,11 @@ test.describe('Shopping cart', { tag: '@cart' }, () => {
     await cartPage.header.expectCartCount(0);
     await page.reload();
     await expect(cartPage.cartItems).toHaveCount(0);
-  });
+  });  
 });
+
+  test('TC-CART-08: cart fixture comes pre-filled', { tag: '@cart' }, async ({ cartWithBackpack }) => {
+    console.log('⏸️ TEST: running my checks');
+    await cartWithBackpack.expectItems(['Sauce Labs Backpack']);
+    await cartWithBackpack.header.expectCartCount(1);
+  });

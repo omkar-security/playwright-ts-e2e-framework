@@ -70,4 +70,23 @@ test.describe('Login', { tag: '@login' }, () => {
     expect(sessionCookie, 'session cookie should exist').toBeDefined();
     expect(sessionCookie?.value).toBe(USERS.standard.username);
   });
+  
+  test('TC-LOGIN-08: user can log out and log back in', { tag: '@regression' }, async ({
+  loginPage,
+  inventoryPage,
+}) => {
+  // ACT 1: log in as the standard user
+  await loginPage.loginAs(USERS.standard);
+  await inventoryPage.expectToBeOpen();
+
+  // ACT 2: log out using the header
+  await inventoryPage.header.logout();
+  await loginPage.expectToBeOpen();
+
+  // ACT 3: log in again
+  await loginPage.loginAs(USERS.standard);
+
+  // ASSERT: we're back in the shop
+  await inventoryPage.expectToBeOpen();
+});
 });
