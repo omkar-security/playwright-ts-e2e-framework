@@ -21,4 +21,12 @@ export const expect = baseExpect.extend({
         `Received: ${JSON.stringify(received)}\nExpected: ${JSON.stringify(sorted)}`,
     };
   },
+    toBeWithinRange(received: number, min: number, max: number) {
+    const pass = received >= min && received <= max;
+    return {
+      pass,
+      name: 'toBeWithinRange',
+      message: () => `expected ${received} ${pass ? 'not ' : ''}to be between ${min} and ${max}`,
+    };
+  },
 });

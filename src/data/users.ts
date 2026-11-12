@@ -31,4 +31,5 @@ export const INVALID_LOGIN_CASES = [
   { title: 'unknown user', username: 'ghost_user', password: PASSWORD, error: LOGIN_ERRORS.invalidCredentials },
   { title: 'case-sensitive username', username: 'STANDARD_USER', password: PASSWORD, error: LOGIN_ERRORS.invalidCredentials },
   { title: 'locked out user', username: 'locked_out_user', password: PASSWORD, error: LOGIN_ERRORS.lockedOut },
+  { title: 'common admin/admin guess', username: 'admin', password: 'admin', error: LOGIN_ERRORS.invalidCredentials },
 ];

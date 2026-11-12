@@ -96,4 +96,28 @@ test.describe('Inventory / Product listing', { tag: '@inventory' }, () => {
   await loggedInInventory.addAllToCart();
   await loggedInInventory.header.expectCartCount(6);
 });
+
+  for (const product of ALL_PRODUCTS) {
+    test(`TC-INV-10: can add "${product.name}" to the cart`, { tag: '@regression' }, async ({ loggedInInventory }) => {
+      await test.step('Add the product to the cart', async () => {
+        await loggedInInventory.addToCart(product.name);
+      });
+
+      await test.step('Button changes to "Remove"', async () => {
+        await expect(
+          loggedInInventory.productCard(product.name).getByRole('button', { name: 'Remove' }),
+        ).toBeVisible();
+      });
+
+      await test.step('Cart badge shows 1', async () => {
+        await loggedInInventory.header.expectCartCount(1);
+      });
+    });
+  }
+    test('TC-INV-11: every product price is between $5 and $60', { tag: '@regression' }, async ({ loggedInInventory }) => {
+    const prices = await loggedInInventory.getProductPrices();
+    for (const price of prices) {
+      expect.soft(price).toBeWithinRange(5, 60);
+    }
+  });
 });
